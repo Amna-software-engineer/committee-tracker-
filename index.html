@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
     <title>Committee Tracker Dashboard</title>
     <style>
         :root {
@@ -82,7 +85,7 @@
         .stat-card.active-accent .stat-value {
             color: white;
         }
-        
+
         .stat-subtext {
             font-size: 0.8rem;
             color: #e0f2fe;
@@ -151,22 +154,26 @@
             background-color: var(--success-light);
             border-color: #bbf7d0;
         }
-        .day-box.checked .day-num, .day-box.checked .day-date {
+
+        .day-box.checked .day-num,
+        .day-box.checked .day-date {
             color: #15803d;
         }
 
         /* Tiny Skip Toggle Action button link */
-       .skip-action-btn {
-    font-size: 0.6rem;
-    color: #e11d48;
-    background: #ffe4e6;
-    padding: 4px 8px; /* Padding thodi barha di taake touch accuracy behtar ho */
-    border-radius: 6px;
-    margin-top: 8px; /* Checkbox se thoda aur niche kar diya */
-    font-weight: 600;
-    cursor: pointer;
-    z-index: 10;
-}
+        .skip-action-btn {
+            font-size: 0.6rem;
+            color: #e11d48;
+            background: #ffe4e6;
+            padding: 4px 8px;
+            /* Padding thodi barha di taake touch accuracy behtar ho */
+            border-radius: 6px;
+            margin-top: 8px;
+            /* Checkbox se thoda aur niche kar diya */
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 10;
+        }
 
         /* Table Design optimized for Mobile Views */
         .table-responsive-wrapper {
@@ -201,12 +208,27 @@
             vertical-align: middle;
         }
 
-        tr.row-completed { background-color: #ffffff; color: var(--gray-text); }
-        tr.row-completed td { opacity: 0.75; }
-        tr.row-active { background-color: var(--success-light); font-weight: 600; }
-        tr.row-remaining { background-color: #ffffff; }
+        tr.row-completed {
+            background-color: #ffffff;
+            color: var(--gray-text);
+        }
 
-        select, input[type="text"], input[type="date"] {
+        tr.row-completed td {
+            opacity: 0.75;
+        }
+
+        tr.row-active {
+            background-color: var(--success-light);
+            font-weight: 600;
+        }
+
+        tr.row-remaining {
+            background-color: #ffffff;
+        }
+
+        select,
+        input[type="text"],
+        input[type="date"] {
             font-size: 0.85rem;
             padding: 8px 10px;
             width: 100%;
@@ -228,11 +250,38 @@
             font-size: 0.85rem;
         }
 
-        .note-container { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
-        .note-text { cursor: pointer; word-break: break-all; font-size: 0.85rem; }
-        .delete-note-btn { cursor: pointer; color: #ef4444; font-size: 12px; padding: 2px 6px; }
-        .add-note-placeholder { color: var(--primary); cursor: pointer; font-weight: 500; font-size: 0.8rem; }
-        .editable-date { cursor: pointer; font-weight: 500; border-bottom: 1px dashed var(--gray-text); }
+        .note-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4px;
+        }
+
+        .note-text {
+            cursor: pointer;
+            word-break: break-all;
+            font-size: 0.85rem;
+        }
+
+        .delete-note-btn {
+            cursor: pointer;
+            color: #ef4444;
+            font-size: 12px;
+            padding: 2px 6px;
+        }
+
+        .add-note-placeholder {
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+
+        .editable-date {
+            cursor: pointer;
+            font-weight: 500;
+            border-bottom: 1px dashed var(--gray-text);
+        }
 
         .pagination-container {
             margin-top: 16px;
@@ -257,9 +306,24 @@
             font-size: 0.85rem;
         }
 
-        .page-btn:disabled { background-color: #cbd5e1; color: #94a3b8; cursor: not-allowed; }
-        #pageIndicator { font-size: 0.85rem; color: var(--gray-text); font-weight: 500; }
-        .info-tip { font-size: 0.75rem; color: var(--gray-text); margin: 8px 4px; line-height: 1.4; }
+        .page-btn:disabled {
+            background-color: #cbd5e1;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        #pageIndicator {
+            font-size: 0.85rem;
+            color: var(--gray-text);
+            font-weight: 500;
+        }
+
+        .info-tip {
+            font-size: 0.75rem;
+            color: var(--gray-text);
+            margin: 8px 4px;
+            line-height: 1.4;
+        }
     </style>
 </head>
 
@@ -270,7 +334,8 @@
             <div class="stat-label">Current Active Cycle</div>
             <div class="stat-value" id="activeTitleText">Loading...</div>
             <div class="stat-subtext" id="expectedCollectionText">Should Be Saved: Calculating...</div>
-            <div class="stat-subtext" id="actualCollectionText" style="color: #bbf7d0; font-weight: 700;">Actually Ticked: 0 PKR</div>
+            <div class="stat-subtext" id="actualCollectionText" style="color: #bbf7d0; font-weight: 700;">Actually
+                Ticked: 0 PKR</div>
         </div>
         <div class="stat-card">
             <div class="stat-label">Daily Amount</div>
@@ -283,14 +348,16 @@
     </div>
 
     <div class="checklist-card">
-        <div class="stat-label" id="checklistHeaderTitle" style="color: var(--dark-text);">📆 Daily Cash Saved Checklist</div>
+        <div class="stat-label" id="checklistHeaderTitle" style="color: var(--dark-text);">📆 Daily Cash Saved Checklist
+        </div>
         <div class="grid-boxes" id="checklistGridBoxes">
-            </div>
+        </div>
     </div>
 
     <h3>📊 Committee Tracker Schedule</h3>
-    <p class="info-tip">* Jis date ko skip krna chahein, box k niche "Skip Date" daba dein. Agli dates automatic agay shift ho jayengi.</p>
-    
+    <p class="info-tip">* Jis date ko skip krna chahein, box k niche "Skip Date" daba dein. Agli dates automatic agay
+        shift ho jayengi.</p>
+
     <div class="table-responsive-wrapper">
         <table id="mobileCommitteeTable">
             <thead>
@@ -302,7 +369,7 @@
                 </tr>
             </thead>
             <tbody id="committeeTableBody">
-                </tbody>
+            </tbody>
         </table>
     </div>
 
@@ -312,7 +379,7 @@
         <button class="page-btn" id="nextPageBtn">Next</button>
     </div>
 
-   <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>
