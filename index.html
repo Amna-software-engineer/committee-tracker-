@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Committee Tracker Dashboard</title>
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-light: #e0f2fe;
+            --success: #16a34a;
+            --success-light: #dcfce7;
+            --gray-bg: #f8fafc;
+            --gray-text: #64748b;
+            --dark-text: #0f172a;
+            --border: #e2e8f0;
+            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f1f5f9;
+            color: var(--dark-text);
+            margin: 0;
+            padding: 16px;
+            padding-bottom: 40px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h3 {
+            margin: 24px 0 12px 0;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Top Summary Statistics Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 14px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--gray-text);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-top: 4px;
+            color: var(--dark-text);
+        }
+
+        .stat-card.active-accent {
+            grid-column: span 2;
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: white;
+        }
+
+        .stat-card.active-accent .stat-label {
+            color: #bae6fd;
+        }
+
+        .stat-card.active-accent .stat-value {
+            color: white;
+        }
+        
+        .stat-subtext {
+            font-size: 0.8rem;
+            color: #e0f2fe;
+            margin-top: 4px;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        /* Daily Checklist Box Styles */
+        .checklist-card {
+            background: white;
+            padding: 16px;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .grid-boxes {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .day-box {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--gray-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 4px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .day-box .day-num {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 2px;
+        }
+
+        .day-box .day-date {
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: var(--gray-text);
+            margin-bottom: 6px;
+        }
+
+        .day-box input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--success);
+            cursor: pointer;
+            margin: 0;
+        }
+
+        /* Checked State Styling */
+        .day-box.checked {
+            background-color: var(--success-light);
+            border-color: #bbf7d0;
+        }
+        .day-box.checked .day-num, .day-box.checked .day-date {
+            color: #15803d;
+        }
+
+        /* Tiny Skip Toggle Action button link */
+        .skip-action-btn {
+            font-size: 0.6rem;
+            color: #e11d48;
+            background: #ffe4e6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-top: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* Table Design optimized for Mobile Views */
+        .table-responsive-wrapper {
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background-color: var(--gray-bg);
+            color: var(--gray-text);
+            font-weight: 600;
+            padding: 12px 14px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        tr.row-completed { background-color: #ffffff; color: var(--gray-text); }
+        tr.row-completed td { opacity: 0.75; }
+        tr.row-active { background-color: var(--success-light); font-weight: 600; }
+        tr.row-remaining { background-color: #ffffff; }
+
+        select, input[type="text"], input[type="date"] {
+            font-size: 0.85rem;
+            padding: 8px 10px;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background-color: var(--gray-bg);
+            color: var(--dark-text);
+            font-family: inherit;
+        }
+
+        .assigned-name {
+            font-weight: 600;
+            color: var(--dark-text);
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-block;
+            font-size: 0.85rem;
+        }
+
+        .note-container { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+        .note-text { cursor: pointer; word-break: break-all; font-size: 0.85rem; }
+        .delete-note-btn { cursor: pointer; color: #ef4444; font-size: 12px; padding: 2px 6px; }
+        .add-note-placeholder { color: var(--primary); cursor: pointer; font-weight: 500; font-size: 0.8rem; }
+        .editable-date { cursor: pointer; font-weight: 500; border-bottom: 1px dashed var(--gray-text); }
+
+        .pagination-container {
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 10px 14px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border);
+        }
+
+        .page-btn {
+            padding: 8px 16px;
+            cursor: pointer;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .page-btn:disabled { background-color: #cbd5e1; color: #94a3b8; cursor: not-allowed; }
+        #pageIndicator { font-size: 0.85rem; color: var(--gray-text); font-weight: 500; }
+        .info-tip { font-size: 0.75rem; color: var(--gray-text); margin: 8px 4px; line-height: 1.4; }
+    </style>
+</head>
+
+<body>
+
+    <div class="stats-grid">
+        <div class="stat-card active-accent" id="activeStatusPanel">
+            <div class="stat-label">Current Active Cycle</div>
+            <div class="stat-value" id="activeTitleText">Loading...</div>
+            <div class="stat-subtext" id="expectedCollectionText">Should Be Saved: Calculating...</div>
+            <div class="stat-subtext" id="actualCollectionText" style="color: #bbf7d0; font-weight: 700;">Actually Ticked: 0 PKR</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Daily Amount</div>
+            <div class="stat-value">650 PKR</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Total Pool Max</div>
+            <div class="stat-value">13,000 PKR</div>
+        </div>
+    </div>
+
+    <div class="checklist-card">
+        <div class="stat-label" id="checklistHeaderTitle" style="color: var(--dark-text);">📆 Daily Cash Saved Checklist</div>
+        <div class="grid-boxes" id="checklistGridBoxes">
+            </div>
+    </div>
+
+    <h3>📊 Committee Tracker Schedule</h3>
+    <p class="info-tip">* Jis date ko skip krna chahein, box k niche "Skip Date" daba dein. Agli dates automatic agay shift ho jayengi.</p>
+    
+    <div class="table-responsive-wrapper">
+        <table id="mobileCommitteeTable">
+            <thead>
+                <tr>
+                    <th style="width: 8%;">No.</th>
+                    <th style="width: 32%;">Timeline Limits</th>
+                    <th style="width: 30%;">Given To</th>
+                    <th style="width: 30%;">Tracking Notes</th>
+                </tr>
+            </thead>
+            <tbody id="committeeTableBody">
+                </tbody>
+        </table>
+    </div>
+
+    <div class="pagination-container">
+        <button class="page-btn" id="prevPageBtn">Prev</button>
+        <span id="pageIndicator">Page 1 of 3</span>
+        <button class="page-btn" id="nextPageBtn">Next</button>
+    </div>
+
+   <script src="script.js"></script>
+</body>
+
+</html>
